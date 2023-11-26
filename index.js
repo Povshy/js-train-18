@@ -8,7 +8,13 @@
 function checkData(data) {
   // Якщо об'єкт не пустий повертаємо дані
   // Інакше створюємо помилку,в якості тексту помилки ми використовуємо рядок "Об'єкт пустий".
+  let err = Error("Об'єкт пустий");
+  if (Object.keys(data).length > 0) {
+    return data;
+  }
   // Якщо виникла помилка, повертаємо її повідомлення.
+
+  return err.message;
 }
 
 console.log("Завдання: 1 ==============================");
@@ -30,6 +36,11 @@ function parseJson(jsonStr) {
   // Якщо рядок має невірний формат, виникне помилка, яку ми обробляємо у блоку catch.
   // Повертаємо отриманий об'єкт
   // Якщо виникла помилка, повертаємо її повідомлення.
+  try {
+    return JSON.parse(jsonStr);
+  } catch (error) {
+    return error.message;
+  }
 }
 console.log("Завдання: 2 ==============================");
 
@@ -60,6 +71,17 @@ function getAge(age) {
   // Викидаємо помилку
   // Якщо помилки не має повертаємо рядок `Вік користувача: ${age}`
   // Якщо виникла помилка, повертаємо об'єкт з name та message помилки.
+  try {
+    if (age < 0) {
+      let error = Error("Вік не може бути менше 0!");
+      error.name = "AgeError";
+      throw error;
+    } else {
+      return `Вік користувача: ${age}`;
+    }
+  } catch (error) {
+    return { error: error.message, name: error.name };
+  }
 }
 console.log("Завдання: 3 ==============================");
 
@@ -78,11 +100,21 @@ console.log(getAge(20));
  *  books - масив книг.
  *  id - ID книги.
  */
-function getBookById(books, id) {
+function getBookById(books, d) {
   // Спроба знайти книгу по ID та записати в змінну book.
   // Якщо книга не знайдена, генерується TypeError з повідомленням Книга з ID ${id} не знайдена!.
   // Повертаємо book
   // Повертаємо текстове представлення помилки
+  try {
+    let book = books.find((el) => el.id === d);
+
+    if (!book) {
+      throw TypeError(`Книга з ID ${d} не знайдена!`);
+    }
+    return `Книга: ${book.title}`;
+  } catch (err) {
+    return err.message;
+  }
 }
 console.log("Завдання: 4 ==============================");
 
@@ -123,6 +155,16 @@ function decodeURIComponentWrapper(encodedString) {
   // Повертаємо декодований рядок
   // Якщо виникла помилка, і ії назва дорівнює URIError повертаємо помилку про неправильний URI формат з повідомленням Помилка декодування URI,
   //  інкше повертаємо текстове представлення помилки
+  try {
+    let decode = decodeURIComponent(encodedString);
+    return decode;
+  } catch (err) {
+    if (err.name === "URIError") {
+      return "Помилка декодування URI";
+    } else {
+      return err.message;
+    }
+  }
 }
 
 console.log("Завдання: 5 ==============================");
@@ -139,7 +181,22 @@ console.log(decodeURIComponentWrapper("%E0%A4%A")); // виведе інформ
  */
 function findEvenNumber(numbers) {
   // Створюємо змінну evenNumber без значення
+  let evenNumber;
   // Шукаємо перше число, що ділиться на 2 без остачі, та записуємо в нашу змінну.
+  try {
+    evenNumber = numbers.find((el) => el % 2 === 0);
+
+    if (!evenNumber) {
+      throw new Error("У масиві немає чисел, що діляться на 2 без остачі!");
+    }
+
+    console.log(numbers);
+    return evenNumber;
+  } catch (err) {
+    console.log(numbers);
+
+    return `Error: ${err.message}`;
+  }
   // Якщо такого числа немає, кидаємо помилку з повідомлення У масиві немає чисел, що діляться на 2 без остачі!.
   // Якщо число знайдено повертаємо його
   // Виводимо текстове представлення помилки.
@@ -189,7 +246,15 @@ validateUser({ name: "John Doe" });
  */
 function calculateSquareRoot(number) {
   // Перевіряємо, чи аргумент є числом, якщо ні викидуємо помилку про невірний тип даних з повідомленням Аргумент має бути числом!".
+  if (typeof number !== "number") {
+    throw new TypeError("Аргумент має бути числом!");
+  }
   // Перевіряємо, чи число не від'ємне, якщо ні викидуємо помилку про тип недопустимий діапазон з повідомленням Число не повинно бути від'ємним!".
+  if (number < 0) {
+    throw new RangeError("Число не повинно бути від'ємним!");
+  }
+  return Math.sqrt(number);
+
   // Повертаємо корінь квадратний з вхідного значення
   // Повертаємо повідомлення про помилку.
 }
